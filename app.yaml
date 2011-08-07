@@ -1,0 +1,15 @@
+application: playnicewithothersnet
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /images
+  static_dir: images
+- url: /pages
+  static_dir: pages 
+- url: /
+  static_files: pages/index.html
+  upload: pages/index.html
+- url: /.*
+  script: splash.py
