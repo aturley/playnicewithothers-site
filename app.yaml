@@ -6,10 +6,15 @@ api_version: 1
 handlers:
 - url: /images
   static_dir: images
+- url: /css
+  static_dir: css
 - url: /pages
   static_dir: pages 
 - url: /
   static_files: pages/index.html
   upload: pages/index.html
+- url: /favicon.ico
+  static_files: images/favicon.ico
+  upload: images/favicon.ico
 - url: /.*
   script: splash.py
