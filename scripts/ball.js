@@ -1,7 +1,9 @@
 (function(win) {
-  var Ball = function(uiRep) {
+  var Ball = function(uiRep, id) {
     this.ballPixPerSecond = 100;
     this.uiRep = uiRep;
+    this.id = id;
+    this.heartbeatReserve = 2;
   };
 
   Ball.prototype.moveTo = function(x, y, cb) {
