@@ -6,6 +6,28 @@
     this.heartbeatReserve = 2;
   };
 
+  Ball.prototype.getPos = function() {
+    return {x:this.uiRep.attr("cx"), y:this.uiRep.attr("cy")};
+  };
+
+  Ball.prototype.setPos = function(pos) {
+    this.uiRep.stop();
+    this.uiRep.animate({"100%":{cx:pos.x, cy:pos.y, callback:cb}}, 0);
+    return this;
+  };
+
+  Ball.prototype.beatHeart = function() {
+    this.heartbeatReserve += 1;
+  };
+
+  Ball.prototype.decHeart = function() {
+    this.heartbeatReserve -= 1;
+  };
+
+  Ball.prototype.isDead = function() {
+    return this.heartbeatReserve > 0;
+  };
+
   Ball.prototype.moveTo = function(x, y, cb) {
     this.uiRep.stop();
     var moveTime = this._timeToNewPos(this.uiRep.attr("cx"), this.uiRep.attr("cy"), x, y);

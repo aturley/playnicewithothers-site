@@ -13,10 +13,9 @@
     circle.attr("fill", "#f00");
     circle.attr("stroke", "#f00");
 
-    var myBall = new Ball(circle, Math.random());
-    var otherBalls = {};
+    var myBall = new Ball(circle, Math.floor(Math.random() * 100000));
 
-    var world = new World();
+    var world = new World(paper, myBall);
 
     $("#main").click(function (e) {
         var posX = $(this).offset().left;
@@ -25,6 +24,7 @@
         var y = e.pageY - posY;
         var move = myBall.createMove(x, y);
         myBall.doMove(move);
+        world.sendMyMove(move);
       });
   };
 
