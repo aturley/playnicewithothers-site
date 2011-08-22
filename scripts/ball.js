@@ -10,7 +10,7 @@
     return {x:this.uiRep.attr("cx"), y:this.uiRep.attr("cy")};
   };
 
-  Ball.prototype.setPos = function(pos) {
+  Ball.prototype.setPos = function(pos, cb) {
     this.uiRep.stop();
     this.uiRep.animate({"100%":{cx:pos.x, cy:pos.y, callback:cb}}, 0);
     return this;
@@ -25,7 +25,7 @@
   };
 
   Ball.prototype.isDead = function() {
-    return this.heartbeatReserve > 0;
+    return this.heartbeatReserve <= 0;
   };
 
   Ball.prototype.moveTo = function(x, y, cb) {

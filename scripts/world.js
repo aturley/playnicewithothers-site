@@ -4,14 +4,39 @@
     this.myBall = ball;
     this.otherBalls = {};
     this.heartbeatInterval = 2000;
+    this.channelName = "ballgame";
 
     win.setInterval(this.sendHeartbeat, this.heartbeatInterval, this);
     win.setInterval(this.cullOthers, this.heartbeatInterval, this);
+
+    var self = this;
+
+    // setup pub-sub
+    PUBNUB.subscribe({
+      channel  : this.channelName,
+          callback : function(message) { self.messageHandler(message) }
+      });
+  };
+
+  World.prototype.messageHandler = function (message) {
+    if (message.message === "move") {
+      this.handleOtherMove(message.ballId, message.move);
+    } else if (message.message === "heartbeat") {
+      this.handleOtherHeartbeat(message.ballId, message.pos);
+    }
+  };
+
+  World.prototype.getBall = function(id) {
+    return this.otherBalls[id];
   };
 
   World.prototype.addBall = function(id) {
-    var circle = paper.circle(-10, -10, 10);
+    var circle = this.paper.circle(-10, -10, 10);
+    circle.attr("fill", "#f00");
+    circle.attr("stroke", "#f00");
+
     var ball = new Ball(circle, id);
+    this.otherBalls[id] = ball;
     return ball;
   };
 
@@ -24,12 +49,22 @@
   };
 
   World.prototype._sendMove = function(id, move) {
+    PUBNUB.publish({
+      channel : this.channelName,
+          message : {message:"move", ballId:id, move:move}
+          });
   };
 
   World.prototype._sendHeartbeat = function(id, pos) {
+    PUBNUB.publish({
+      channel : this.channelName,
+          message : {message:"heartbeat", ballId:id, pos:pos}
+          });
   };
 
-  World.prototype.handleOtherMove = function(move, id) {
+  World.prototype.handleOtherMove = function(id, move) {
+    console.log("received move from " + id);
+    console.log("my id == " + this.myBall.id);
     if (id == this.myBall.id) {
       return;
     }
@@ -42,8 +77,8 @@
       return;
     }
     var heartbeatBall = this.getBall(id);
-    if (!heartbeatBall) {
-      this.addBall(id);
+    if (heartbeatBall == undefined) {
+      heartbeatBall = this.addBall(id);
       heartbeatBall.setPos(pos);
     }
     heartbeatBall.beatHeart();

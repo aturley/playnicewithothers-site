@@ -17,6 +17,8 @@
 
     var world = new World(paper, myBall);
 
+    world.sendHeartbeat(world);
+
     $("#main").click(function (e) {
         var posX = $(this).offset().left;
         var posY = $(this).offset().top;
