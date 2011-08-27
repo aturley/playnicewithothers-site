@@ -15,12 +15,49 @@ type="text/javascript"></script>
   sub-key="sub-d56a2edc-bedc-11e0-80a9-1b74f7ee0d8d" ssl="off"
   origin="pubsub.pubnub.com" id="pubnub"></div>
 <script src="http://cdn.pubnub.com/pubnub-3.1.min.js"></script>
-<div id="header"><center><img src="/images/header.png" alt="Play Nice
+<div id="container">
+  <div id="mainpanel">
+    <div id="header"><center><img src="/images/header.png" alt="Play Nice
   With Others -- A Companion Website to a Talk at the 2011 New York
   Maker Faire"/></center></div>
-<center><div id="main" style="width:468px;height:503px"></div></center>
-<div id="footer"><center><img src="/images/footer.png" alt="A
+    <center><div id="main"
+  style="width:468px;height:503px"></div></center>
+    <div id="footer"><center><img src="/images/footer.png" alt="A
   collaboration between Andy Turley and Narwhal
   Creative"/></center></div>
-
+  </div>
+<div id="rightpanel">
+ <script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'profile',
+  rpp: 4,
+  interval: 30000,
+  width: 250,
+  height: 300,
+  theme: {
+    shell: {
+      background: '#d4ead5',
+      color: '#688056'
+    },
+    tweets: {
+      background: '#688056',
+      color: '#ffffff',
+      links: '#decec0'
+    }
+  },
+  features: {
+    scrollbar: false,
+    loop: false,
+    live: false,
+    hashtags: true,
+    timestamp: true,
+    avatars: false,
+    behavior: 'all'
+  }
+}).render().setUser('plyncwthothrs').start();
+</script>
+</div>
+</div>
 </body> </html>

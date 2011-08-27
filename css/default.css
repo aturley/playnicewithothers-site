@@ -1,4 +1,19 @@
 body
 {
-background-color:#decec0;
+    background-color:#decec0;
+}
+
+#container {
+    margin: auto;
+    width: 900px;
+}
+
+#mainpanel {
+    float: left;
+    width: 600px;
+}
+
+#rightpanel {
+    float: right;
+    width: 260px;
 }
