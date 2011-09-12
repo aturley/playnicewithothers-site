@@ -18,5 +18,7 @@ handlers:
 - url: /favicon.ico
   static_files: images/favicon.ico
   upload: images/favicon.ico
+- url: /c4.*
+  script: c4.py
 - url: /.*
   script: splash.py
