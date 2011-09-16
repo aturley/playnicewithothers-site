@@ -11,7 +11,7 @@
     var bmargin = 10;
     var boxHeight = 40;
     var boxWidth = 40;
-    // create raphel space
+    // create raphael space
     var totalWidth = this.numberOfButtons * boxWidth + rmargin + lmargin + (this.numberOfButtons - 1) * spacing;
     var totalHeight = tmargin + bmargin + boxHeight;
 
@@ -50,7 +50,7 @@
             }
           }
           $.ajax({
-            url: "/c4/controllermessage",
+            url: "/c4/vote",
                 type:"POST",
                 data:{user_id:(new User().userId), vote:i},
                 success: function(data){
@@ -69,4 +69,15 @@
 $(document).ready(function() {
     var buttons = new Buttons(7);
     buttons.drawButtons();
+    $.ajax({
+      url: "/c4/team",
+          data:{user_id:(new User().userId)},
+          success: function(data){
+          console.log("got data " + data);
+          dataObj = $.parseJSON(data);
+          console.log("team: " + dataObj.team);
+          $("#team").html("your team is: " + dataObj.team);
+        }
+      });
+
   });

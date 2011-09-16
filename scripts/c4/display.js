@@ -1,20 +1,14 @@
-dddd = null;
-
 (function (win) {
-  var Display = function(numberOfButtons) {
-    var spacing = 10;
-    var lmargin = 10;
-    var rmargin = 10;
-    var tmargin = 10;
-    var bmargin = 10;
-    var boxHeight = 40;
-    var boxWidth = 40;
-    // create raphel space
-    var totalWidth = this.numberOfButtons * boxWidth + rmargin + lmargin + (this.numberOfButtons - 1) * spacing;
-    var totalHeight = tmargin + bmargin + boxHeight;
+  var Display = function() {
+    this.board = new Board({color:"red"}, {color:"black"}, {color:"white"});
+    this.boardPaper = Raphael("display", this.board.totalWidth, this.board.totalHeight);
+    this.board.initPaper(this.boardPaper);
 
-    this.numberOfButtons = numberOfButtons;
-    this.paper = Raphael("display", totalWidth, totalHeight);
+
+    this.voting = new Voting();
+    this.votingPaper = Raphael("voting", this.voting.totalWidth, this.voting.totalHeight);
+    this.voting.initPaper(this.votingPaper);
+
     this.channelToken = null;
     var display = this;
     $.ajax({
@@ -28,18 +22,62 @@ dddd = null;
       });
   };
 
+  Display.prototype.kickTimer = function() {
+    $.ajax({
+      url: "/timer",
+          data:{game:"c4"},
+      });    
+  };
+
   Display.prototype.setupChannel = function(channelToken) {
+    var display = this;
     var channel = new goog.appengine.Channel(channelToken);
     var handler = {
       'onopen': function() {},
-      'onmessage': function(data) {console.log("got data " + data.data);},
+      'onmessage': function(data) {
+        dataObj = $.parseJSON(data.data);
+        console.log("got data " + dataObj);
+        console.log("got data.type " + dataObj.type);
+        if (dataObj.type == "vote") {
+          display.handleVote(dataObj.user_id, dataObj.vote);
+        } else if (dataObj.type == "votes") {
+          display.handleVotes(dataObj.votes);
+        } else if (dataObj.type == "timer") {
+          display.handleTimer();
+        } else if (dataObj.type == "turnfinished") {
+          display.handleTurnFinished(dataObj.board);
+        }
+      },
       'onerror': function() {},
       'onclose': function() {}
     };
     var socket = channel.open(handler);
   };
 
+  Display.prototype.handleVote = function(user_id, vote) {
+    console.log("" + user_id + " voted for " + vote);
+  };
+
+  Display.prototype.handleVotes = function(votes) {
+    console.log("votes: " + votes);
+    this.voting.drawVotes(votes);
+  };
+
+  Display.prototype.handleTimer = function() {
+    console.log("timer");
+    console.log("restarting timer");
+    this.kickTimer();
+  };
+
+  Display.prototype.handleTurnFinished = function(board) {
+    this.board.drawString(board);
+    this.voting.clearVotes();
+  };
+
   Display.prototype.draw = function() {
+  };
+
+  Display.prototype.drawx = function() {
     var spacing = 10;
     var lmargin = 10;
     var rmargin = 10;
@@ -53,6 +91,7 @@ dddd = null;
 
     var paper = this.paper;
     // draw boxes
+    console.log("drawing " + totalWidth + " " + totalHeight);
     var backing = paper.rect(0, 0, totalWidth, totalHeight, 5);
     backing.attr("fill", "#aaa")
     backing.attr("stroke", "#aaa")
@@ -102,6 +141,7 @@ dddd = null;
 })(window);
 
 $(document).ready(function() {
-    var display = new Display();
+    var display = new Display(7);
     display.draw();
+    // display.kickTimer();
   });

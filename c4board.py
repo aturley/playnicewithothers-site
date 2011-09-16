@@ -18,6 +18,18 @@ class Board (object):
         self.black = object()
         self.colors = [self.red, self.black]
 
+    def db_store_game_state(self, db):
+        db.rows = self.rows
+        db.columns = self.columns
+        board_map = {self.red: "r", self.black : "b", None : "_"}
+        db.board_array = [board_map[x] for x in self.board_array]
+
+    def db_load_game_state(self, db):
+        self.rows = db.rows
+        self.columns = db.columns
+        board_map = {"r" : self.red, "b" : self.black, "_" : None}
+        self.board_array = [board_map[x] for x in db.board_array]
+
     def __str__(self):
         s = "\n"
         glyphs = {self.red : "r", self.black: "b", None: " "}
