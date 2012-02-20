@@ -44,7 +44,7 @@ class Board (object):
     def play(self, color, column):
         """Place a piece of the given color in the given column."""
         row = self._get_empty_row(column)
-        if row:
+        if row != None:
             self.board_array[self.get_index(row, column)] = color
 
     def test_play(self, column):
@@ -115,6 +115,7 @@ class Board (object):
 
     def _get_empty_row(self, column):
         """Return the first empty row, or None if the row column is full."""
+        # empty_rows = [x[0] for x in enumerate(self._get_column(column)) if x[1][1] == None]
         empty_rows = [x[0] for x in enumerate(self._get_column(column)) if x[1][1] == None]
         if (len(empty_rows) == 0):
             return None

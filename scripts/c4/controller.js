@@ -1,9 +1,57 @@
 (function (win) {
+  function supportsSvg() {
+    // return document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#Shape", "1.0");
+    return false;
+  }
+
   var Buttons = function(numberOfButtons) {
     this.numberOfButtons = numberOfButtons;
+    if (supportsSvg()) {
+      this.drawButtons = this.drawButtonsRaphael;
+    } else {
+      this.drawButtons = this.drawButtonsDiv;
+      $("#bh").get(0).className = "buttonholder";
+    }
   };
 
-  Buttons.prototype.drawButtons = function() {
+  var clickButtonFunction = function(buttonNumber, buttonList) {
+    return function(evt) {
+      console.log("clicked " + buttonNumber);
+      var i;
+      for (i = 0; i < buttonList.length; i++) {
+        if (i == buttonNumber) {
+          console.log("clicking " + i);
+          buttonList[i].className = "clickedbutton";
+        } else {
+          console.log("unclicking " + i);
+          buttonList[i].className = "unclickedbutton";
+        }
+      }
+      $.ajax({
+        url: "/c4/vote",
+            type:"POST",
+            data:{user_id:(new User().userId), vote:buttonNumber},
+            success: function(data){
+            console.log("successful vote: " + data);
+          }
+        });
+    }
+  };
+
+  Buttons.prototype.drawButtonsDiv = function() {
+    var i;
+    var buttonDiv = null;
+    var buttonList = [];
+    for (i = 0; i < this.numberOfButtons; i++) {
+      buttonDiv = document.createElement('div');
+      buttonDiv.className = "unclickedbutton";
+      $("#bh").append(buttonDiv);
+      buttonList.push(buttonDiv);
+      $(buttonDiv).click(clickButtonFunction(i, buttonList));
+    }
+  };
+
+  Buttons.prototype.drawButtonsRaphael = function() {
     var spacing = 10;
     var lmargin = 10;
     var rmargin = 10;

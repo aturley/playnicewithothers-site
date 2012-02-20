@@ -1,5 +1,7 @@
-import board
+import c4board
 import unittest
+
+board = c4board
 
 class TestBoard(unittest.TestCase):
     def setUp(self):
@@ -32,6 +34,25 @@ class TestBoard(unittest.TestCase):
         self.board.play(self.board.red, 1)
         self.assertTrue([x[1] for x in self.board._get_row(5)] == [self.board.red, self.board.black, None, None, None, None, None ])
         self.assertTrue([x[1] for x in self.board._get_row(4)] == [None, self.board.red, None, None, None, None, None])
+
+    def test_test_play(self):
+        self.board.play(self.board.red, 0)
+        self.board.play(self.board.red, 0)
+        self.board.play(self.board.red, 0)
+        self.board.play(self.board.red, 0)
+        self.board.play(self.board.red, 0)
+
+        self.board.play(self.board.red, 1)
+        self.board.play(self.board.red, 1)
+        self.board.play(self.board.red, 1)
+        self.board.play(self.board.red, 1)
+        self.board.play(self.board.red, 1)
+        self.board.play(self.board.red, 1)
+        print self.board._get_empty_row(0)
+        print self.board._get_empty_row(1)
+        print self.board._get_empty_row(2)
+        self.assertTrue(self.board.test_play(1) == False)
+        self.assertTrue(self.board.test_play(0) == True)
 
     def test_get_left_diagonal(self):
         self.board.play(self.board.red, 0)

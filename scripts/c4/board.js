@@ -48,6 +48,7 @@
       leftPos += this.pieceSpacing + 2 * this.pieceRadius;
     }
   };
+
   Board.prototype.drawString = function(stringBoard) {
     console.log("stringBoard = " + stringBoard);
     var i;
@@ -64,6 +65,19 @@
         } else if (piece == "r") {
           color = this.pieces.red.color;
         }
+        this.uiSpots[i][j].attr("fill", color)
+        this.uiSpots[i][j].attr("stroke", color)
+      }
+    }
+  };
+
+  Board.prototype.clearBoard = function() {
+    console.log("clear board");
+    var i;
+    var j;
+    var color = this.pieces.none.color;
+    for (i = 0; i < this.columns; i++) {
+      for (j = 0; j < this.rows; j++) {
         this.uiSpots[i][j].attr("fill", color)
         this.uiSpots[i][j].attr("stroke", color)
       }

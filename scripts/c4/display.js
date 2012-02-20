@@ -3,11 +3,15 @@
     this.board = new Board({color:"red"}, {color:"black"}, {color:"white"});
     this.boardPaper = Raphael("display", this.board.totalWidth, this.board.totalHeight);
     this.board.initPaper(this.boardPaper);
-
+    this.won = false;
 
     this.voting = new Voting();
     this.votingPaper = Raphael("voting", this.voting.totalWidth, this.voting.totalHeight);
     this.voting.initPaper(this.votingPaper);
+
+    this.timer = new CountdownTimer(this.voting.totalWidth);
+    this.timerPaper = Raphael("countdowntimer", this.voting.totalWidth, this.timer.height);
+    this.timer.initPaper(this.timerPaper);
 
     this.channelToken = null;
     var display = this;
@@ -40,12 +44,18 @@
         console.log("got data.type " + dataObj.type);
         if (dataObj.type == "vote") {
           display.handleVote(dataObj.user_id, dataObj.vote);
+        } else if (dataObj.type == "newgame") {
+          display.handleNewGame();
+        } else if (dataObj.type == "startgame") {
+          display.handleStartGame(dataObj.interval);
+        } else if (dataObj.type == "playercount") {
+          display.handlePlayerCount(dataObj.count);
         } else if (dataObj.type == "votes") {
           display.handleVotes(dataObj.votes);
         } else if (dataObj.type == "timer") {
           display.handleTimer();
         } else if (dataObj.type == "turnfinished") {
-          display.handleTurnFinished(dataObj.board);
+          display.handleTurnFinished(dataObj.board, dataObj.turn, dataObj.winner, dataObj.winning, dataObj.interval);
         }
       },
       'onerror': function() {},
@@ -65,13 +75,68 @@
 
   Display.prototype.handleTimer = function() {
     console.log("timer");
-    console.log("restarting timer");
-    this.kickTimer();
   };
 
-  Display.prototype.handleTurnFinished = function(board) {
-    this.board.drawString(board);
-    this.voting.clearVotes();
+  Display.prototype.handleNewGame = function() {
+    console.log("clearing board");
+    this.board.clearBoard();
+    this.won = false;
+    this.showTeamTurn("");
+    this.showTurns(0);
+    this.showPlayerCount(0);
+    this.showWinner("");
+  };
+
+  Display.prototype.handleStartGame = function(interval) {
+    console.log("starting game");
+    this.showTeamTurn("black");
+    this.timer.countdown(interval * 1000)
+  };
+
+  Display.prototype.handlePlayerCount = function(count) {
+    console.log("playercount");
+    this.showPlayerCount(count);
+  };
+
+  Display.prototype.handleTurnFinished = function(board, turn, winner, winning, interval) {
+    if (!this.won) {
+      this.board.drawString(board);
+      this.voting.clearVotes();
+
+      this.showTurns(turn + 1);
+
+      if (winner != null) {
+        this.showWinner(winner);
+        this.won = true;
+      } else {
+        this.showTeamTurn(["black", "red"][(turn + 1) % 2]);
+        this.timer.countdown(interval * 1000)
+      }
+    }
+  };
+
+  Display.prototype.showWinner = function(winner) {
+    if (winner) {
+      $("#winner").html(winner + " wins!");
+    } else {
+      $("#winner").html("");
+    }
+  };
+
+  Display.prototype.showTeamTurn = function(team) {
+    if (team == "") {
+      $("#teamturn").html("");
+    } else {
+      $("#teamturn").html(" " + team + "'s turn");
+    }
+  };
+
+  Display.prototype.showPlayerCount = function(count) {
+    $("#playercount").html("Players: " + count);
+  };
+
+  Display.prototype.showTurns = function(turns) {
+    $("#turns").html("Total turns: " + turns);
   };
 
   Display.prototype.draw = function() {
@@ -85,7 +150,7 @@
     var bmargin = 10;
     var boxHeight = 40;
     var boxWidth = 40;
-    // create raphel space
+    // create raphael space
     var totalWidth = this.numberOfButtons * boxWidth + rmargin + lmargin + (this.numberOfButtons - 1) * spacing;
     var totalHeight = tmargin + bmargin + boxHeight;
 
