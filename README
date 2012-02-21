@@ -1,0 +1,18 @@
+The main application is a Connect 4 game that can be played by groups
+of people using their smart phones. When players join the game, they
+are assigned to either the red or black team. During each round, the
+players on the team vote for the next move; when a timer expires the
+move with the most votes is played. Play alternates between red and
+black until one team wins.
+
+The moderator creates a new game and selects the game parameters on this page:
+
+http://SERVER/pages/c4/gamecontrol.html
+
+Players get controllers on this page:
+
+http://SERVER/c4g
+
+The board is displayed on this page:
+
+http://SERVER/pages/c4/display.html
